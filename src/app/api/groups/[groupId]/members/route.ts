@@ -11,9 +11,11 @@ const removeMemberSchema = z.object({
 });
 
 export async function POST(
-  req: Request,
-  { params }: { params: { groupId: string } }
+  req: Request
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -22,7 +24,7 @@ export async function POST(
 
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -60,7 +62,7 @@ export async function POST(
 
     await db.groupMember.create({
       data: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: userToAdd.id,
       },
     });
@@ -77,9 +79,11 @@ export async function POST(
 }
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { groupId: string } }
+  req: Request
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -89,7 +93,7 @@ export async function DELETE(
     // Check if the current user is a member of the group
     const isMember = await db.groupMember.findFirst({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: user.id,
       },
     });
@@ -104,7 +108,7 @@ export async function DELETE(
     // Check if the user to be removed is in the group
     const memberToRemove = await db.groupMember.findFirst({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: body.userId,
       },
     });

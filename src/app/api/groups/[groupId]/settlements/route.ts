@@ -9,16 +9,18 @@ const settlementSchema = z.object({
 });
 
 export async function POST(
-  req: Request,
-  { params }: { params: { groupId: string } }
+  req: Request
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
     }
 
-    const { groupId } = params;
+    // groupId is already extracted from URL
     const body = await req.json();
     const { receiverId, amount } = settlementSchema.parse(body);
 

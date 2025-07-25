@@ -3,10 +3,11 @@ import { db } from "../../../../../../lib/db";
 import { notFound } from "next/navigation";
 import { AddExpenseForm } from "@/components/add-expense-form";
 
-interface AddExpensePageProps {
+interface PageProps {
   params: {
     groupId: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 }
 
 async function getGroupWithMembers(groupId: string, userId: string) {
@@ -35,11 +36,11 @@ async function getGroupWithMembers(groupId: string, userId: string) {
   return group;
 }
 
-export default async function AddExpensePage({ params }: AddExpensePageProps) {
+export default async function AddExpensePage({ params }: PageProps) {
   const { groupId } = params;
   const user = await getCurrentUser();
   if (!user) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized", { status: 401 }) as any;
   }
 
   const group = await getGroupWithMembers(groupId, user.id);
