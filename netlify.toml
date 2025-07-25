@@ -1,0 +1,11 @@
+[build]
+  command = "npx prisma generate && npx prisma db push && next build"
+  publish = ".next"
+
+[functions]
+  directory = "out/functions"
+
+[dev]
+  command = "next dev"
+  port = 3000
+  publish = ".next"
