@@ -3,8 +3,7 @@ import { db } from "../../../../../lib/db";
 import { calculateGroupBalances } from "../../../../../lib/balances";
 
 export async function DELETE(
-  req: Request,
-  { params }: { params: { groupId: string } }
+  req: Request
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,9 +11,13 @@ export async function DELETE(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split('/');
+    const groupId = pathParts[3];
+
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -36,7 +39,7 @@ export async function DELETE(
 
     await db.groupMember.deleteMany({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: user.id,
       },
     });

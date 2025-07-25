@@ -26,17 +26,17 @@ const expenseCreateSchema = z.object({
 });
 
 export async function POST(
-  req: Request,
-  context: { params: { groupId: string } }
+  req: Request
 ) {
-  const { params } = context;
   try {
     const user = await getCurrentUser();
     if (!user) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const groupId = params.groupId;
+    const url = new URL(req.url);
+    const pathParts = url.pathname.split('/');
+    const groupId = pathParts[3];
     const group = await db.group.findFirst({
       where: { id: groupId, members: { some: { userId: user.id } } },
       include: { members: true },
