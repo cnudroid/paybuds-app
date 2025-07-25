@@ -25,13 +25,14 @@ function ActivityListItem({ item }: { item: ActivityItem }) {
         <p className="text-sm font-medium leading-none">
           {item.type === 'expense' ? (
             <span>
-              <strong>{item.payer.name}</strong> added an expense <strong>\"{item.description}\"</strong> in <strong>{item.group.name}</strong>
+              <strong>{item.payer.name}</strong> added an expense <strong>&ldquo;{item.description}&rdquo;</strong> in <strong>{item.group.name}</strong>
             </span>
           ) : (
             <span>
               <strong>{item.payer.name}</strong> settled with <strong>{item.receiver.name}</strong> in <strong>{item.group.name}</strong>
             </span>
           )}
+          {/* Error handling removed as it was unused */}
         </p>
         <p className="text-sm text-muted-foreground">{formattedDate}</p>
       </div>

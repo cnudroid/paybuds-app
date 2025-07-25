@@ -53,7 +53,7 @@ export default function FriendsPage() {
             ))}
           </ul>
         ) : (
-          <p>You don't have any friends yet. Add them to a group to see them here.</p>
+          <p>You don&apos;t have any friends yet. Add them to a group to see them here.</p>
         )}
       </div>
     </div>
