@@ -32,6 +32,7 @@ function ActivityListItem({ item }: { item: ActivityItem }) {
               <strong>{item.payer.name}</strong> settled with <strong>{item.receiver.name}</strong> in <strong>{item.group.name}</strong>
             </span>
           )}
+          {/* Error handling removed as it was unused */}
         </p>
         <p className="text-sm text-muted-foreground">{formattedDate}</p>
       </div>

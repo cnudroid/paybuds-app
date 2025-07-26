@@ -137,7 +137,7 @@ export async function GET(
     return NextResponse.json({
       friend,
       totalBalance,
-      sharedGroups: groupBalances,
+      sharedGroups: groupsWithBalances,
     });
 
   } catch (error) {

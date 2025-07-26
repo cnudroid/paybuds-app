@@ -12,6 +12,9 @@ export async function POST(
   req: Request,
   context
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {

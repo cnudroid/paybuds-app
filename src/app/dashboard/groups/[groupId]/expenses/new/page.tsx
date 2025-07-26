@@ -35,7 +35,7 @@ export default async function AddExpensePage({ params }: { params: { groupId: st
   const { groupId } = params;
   const user = await getCurrentUser();
   if (!user) {
-    return new Response("Unauthorized", { status: 401 });
+    return new Response("Unauthorized", { status: 401 }) as any;
   }
 
   const group = await getGroupWithMembers(groupId, user.id);

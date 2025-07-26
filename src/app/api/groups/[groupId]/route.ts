@@ -11,6 +11,9 @@ export async function GET(
   req: Request,
   context: unknown
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -20,6 +23,7 @@ export async function GET(
     const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
+        id: groupId,
         id: groupId,
         members: { some: { userId: user.id } },
       },
@@ -43,6 +47,9 @@ export async function PATCH(
   req: Request,
   context: unknown
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -52,6 +59,7 @@ export async function PATCH(
     const { groupId } = (context as { params: { groupId: string } }).params;
     const isMember = await db.groupMember.findFirst({
       where: {
+        groupId: groupId,
         groupId: groupId,
         userId: user.id,
       },
@@ -66,6 +74,7 @@ export async function PATCH(
 
     await db.group.update({
       where: {
+        id: groupId,
         id: groupId,
       },
       data: {
@@ -88,6 +97,9 @@ export async function DELETE(
   req: Request,
   context: unknown
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -97,6 +109,7 @@ export async function DELETE(
     const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
+        id: groupId,
         id: groupId,
         members: { some: { userId: user.id } },
       },
@@ -120,6 +133,7 @@ export async function DELETE(
 
     await db.group.delete({
       where: {
+        id: groupId,
         id: groupId,
       },
     });

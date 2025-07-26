@@ -14,6 +14,9 @@ export async function POST(
   req: Request,
   context: unknown
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -23,6 +26,7 @@ export async function POST(
     const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
+        id: groupId,
         id: groupId,
         members: { some: { userId: user.id } },
       },
@@ -62,6 +66,7 @@ export async function POST(
     await db.groupMember.create({
       data: {
         groupId: groupId,
+        groupId: groupId,
         userId: userToAdd.id,
       },
     });
@@ -81,6 +86,9 @@ export async function DELETE(
   req: Request,
   context: unknown
 ) {
+  const url = new URL(req.url);
+  const pathParts = url.pathname.split('/');
+  const groupId = pathParts[3];
   try {
     const user = await getCurrentUser();
     if (!user) {
@@ -91,6 +99,7 @@ export async function DELETE(
     const { groupId } = (context as { params: { groupId: string } }).params;
     const isMember = await db.groupMember.findFirst({
       where: {
+        groupId: groupId,
         groupId: groupId,
         userId: user.id,
       },
@@ -106,6 +115,7 @@ export async function DELETE(
     // Check if the user to be removed is in the group
     const memberToRemove = await db.groupMember.findFirst({
       where: {
+        groupId: groupId,
         groupId: groupId,
         userId: body.userId,
       },
