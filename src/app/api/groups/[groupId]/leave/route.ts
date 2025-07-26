@@ -16,12 +16,12 @@ export async function DELETE(
     const group = await db.group.findFirst({
       where: {
         id: groupId,
-        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
         members: { include: { user: true } },
         expenses: { include: { splits: true } },
+        settlements: true,
       },
     });
 
@@ -38,7 +38,6 @@ export async function DELETE(
 
     await db.groupMember.deleteMany({
       where: {
-        groupId: groupId,
         groupId: groupId,
         userId: user.id,
       },

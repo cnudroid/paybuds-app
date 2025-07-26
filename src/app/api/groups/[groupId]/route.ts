@@ -24,7 +24,6 @@ export async function GET(
     const group = await db.group.findFirst({
       where: {
         id: groupId,
-        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -60,7 +59,6 @@ export async function PATCH(
     const isMember = await db.groupMember.findFirst({
       where: {
         groupId: groupId,
-        groupId: groupId,
         userId: user.id,
       },
     });
@@ -74,7 +72,6 @@ export async function PATCH(
 
     await db.group.update({
       where: {
-        id: groupId,
         id: groupId,
       },
       data: {
@@ -110,7 +107,6 @@ export async function DELETE(
     const group = await db.group.findFirst({
       where: {
         id: groupId,
-        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -133,7 +129,6 @@ export async function DELETE(
 
     await db.group.delete({
       where: {
-        id: groupId,
         id: groupId,
       },
     });

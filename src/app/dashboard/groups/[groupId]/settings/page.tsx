@@ -31,13 +31,14 @@ async function getGroup(groupId: string, userId: string) {
   return group;
 }
 
-export default async function GroupSettingsPage({ params }: { params: { groupId: string } }) {
+export default async function GroupSettingsPage({ params }: { params: Promise<{ groupId: string }> }) {
   const user = await getCurrentUser();
   if (!user) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const group = await getGroup(params.groupId, user.id);
+  const resolvedParams = await params;
+  const group = await getGroup(resolvedParams.groupId, user.id);
   const balances = calculateGroupBalances(group.members, group.expenses, group.settlements);
 
   return (

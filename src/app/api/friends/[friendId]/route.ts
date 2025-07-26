@@ -87,7 +87,7 @@ interface Group {
 
 export async function GET(
   req: Request,
-  context
+  context: { params: Promise<{ friendId: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -95,7 +95,8 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const friendId = context.params.friendId;
+    const params = await context.params;
+    const friendId = params.friendId;
 
     // 1. Fetch friend details
     const friend = await db.user.findUnique({
@@ -137,7 +138,7 @@ export async function GET(
     return NextResponse.json({
       friend,
       totalBalance,
-      sharedGroups: groupsWithBalances,
+      sharedGroups: groupBalances,
     });
 
   } catch (error) {

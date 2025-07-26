@@ -27,7 +27,7 @@ const expenseCreateSchema = z.object({
 
 export async function POST(
   req: Request,
-  context
+  context: { params: Promise<{ groupId: string }> }
 ) {
   try {
     const user = await getCurrentUser();

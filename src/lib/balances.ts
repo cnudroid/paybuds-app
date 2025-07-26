@@ -21,8 +21,8 @@ export function calculateGroupBalances(
   // 1. Calculate balances from expenses
   for (const expense of expenses) {
     // The user who paid the expense is owed money (balance increases)
-    if (balances[expense.paidById] !== undefined) {
-      balances[expense.paidById] += expense.amount;
+    if (balances[expense.payerId] !== undefined) {
+      balances[expense.payerId] += expense.amount;
     }
 
     // The users who the expense was split for owe money (balance decreases)

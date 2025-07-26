@@ -27,7 +27,7 @@ const expenseUpdateSchema = z.object({
 
 export async function PUT(
   req: Request,
-  context
+  context: { params: Promise<{ groupId: string; expenseId: string }> }
 ) {
   try {
     const user = await getCurrentUser();
@@ -35,7 +35,8 @@ export async function PUT(
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const { groupId, expenseId } = context.params;
+    const params = await context.params;
+    const { groupId, expenseId } = params;
     const group = await db.group.findFirst({
       where: { id: groupId, members: { some: { userId: user.id } } },
       include: { members: true },

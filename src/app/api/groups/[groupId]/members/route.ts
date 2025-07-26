@@ -27,7 +27,6 @@ export async function POST(
     const group = await db.group.findFirst({
       where: {
         id: groupId,
-        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -66,7 +65,6 @@ export async function POST(
     await db.groupMember.create({
       data: {
         groupId: groupId,
-        groupId: groupId,
         userId: userToAdd.id,
       },
     });
@@ -100,7 +98,6 @@ export async function DELETE(
     const isMember = await db.groupMember.findFirst({
       where: {
         groupId: groupId,
-        groupId: groupId,
         userId: user.id,
       },
     });
@@ -115,7 +112,6 @@ export async function DELETE(
     // Check if the user to be removed is in the group
     const memberToRemove = await db.groupMember.findFirst({
       where: {
-        groupId: groupId,
         groupId: groupId,
         userId: body.userId,
       },

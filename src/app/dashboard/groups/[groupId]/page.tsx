@@ -12,6 +12,7 @@ import { AddSettlementForm } from "../../../../components/add-settlement-form";
 import { SettlementsList } from "../../../../components/settlements-list";
 import { ExpensesList } from '../../../../components/expenses-list';
 import { Prisma } from '@prisma/client';
+import type { PageProps } from 'next';
 
 // ...existing code...
 
@@ -61,8 +62,16 @@ async function getGroup(groupId: string, userId: string): Promise<GroupWithDetai
   return group;
 }
 
-export default async function GroupPage({ params }: { params: { groupId: string } }) {
-  const { groupId } = params;
+interface GroupPageProps {
+  params: Promise<{ groupId: string }>;
+}
+
+export default async function GroupPage({ params }: GroupPageProps) {
+  const resolvedParams = await params;
+  if (!resolvedParams?.groupId) {
+    throw new Error('Group ID is required');
+  }
+  const { groupId } = resolvedParams;
   const user = await getCurrentUser();
 
   if (!user) {

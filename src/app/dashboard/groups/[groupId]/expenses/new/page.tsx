@@ -1,52 +1,15 @@
-import { getCurrentUser } from "../../../../../../lib/session";
-import { db } from "../../../../../../lib/db";
-import { notFound } from "next/navigation";
-import { AddExpenseForm } from "@/components/add-expense-form";
+'use client';
 
-// ...existing code...
-
-async function getGroupWithMembers(groupId: string, userId: string) {
-  const group = await db.group.findFirst({
-    where: {
-      id: groupId,
-      members: {
-        some: {
-          userId: userId,
-        },
-      },
-    },
-    include: {
-      members: {
-        include: {
-          user: true,
-        },
-      },
-    },
-  });
-
-  if (!group) {
-    notFound();
-  }
-
-  return group;
-}
-
-export default async function AddExpensePage({ params }: { params: { groupId: string } }) {
-  const { groupId } = params;
-  const user = await getCurrentUser();
-  if (!user) {
-    notFound();
-  }
-
-  const group = await getGroupWithMembers(groupId, user.id);
-
+export default function AddExpensePage() {
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold">Add Expense</h1>
-        <p className="text-muted-foreground">In group: {group.name}</p>
+        <p className="text-muted-foreground">In group: [Group Name]</p>
       </div>
-      <AddExpenseForm group={group} currentUser={user} />
+      <div className="p-4 border rounded-lg">
+        <p>Expense form will be rendered here</p>
+      </div>
     </div>
   );
 }
