@@ -12,7 +12,7 @@ const removeMemberSchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -20,9 +20,10 @@ export async function POST(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -51,7 +52,7 @@ export async function POST(
     }
 
     const isAlreadyMember = group.members.some(
-      (member) => member.userId === userToAdd.id
+      (member: { userId: string }) => member.userId === userToAdd.id
     );
 
     if (isAlreadyMember) {
@@ -60,7 +61,7 @@ export async function POST(
 
     await db.groupMember.create({
       data: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: userToAdd.id,
       },
     });
@@ -78,7 +79,7 @@ export async function POST(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -87,9 +88,10 @@ export async function DELETE(
     }
 
     // Check if the current user is a member of the group
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const isMember = await db.groupMember.findFirst({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: user.id,
       },
     });
@@ -104,7 +106,7 @@ export async function DELETE(
     // Check if the user to be removed is in the group
     const memberToRemove = await db.groupMember.findFirst({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: body.userId,
       },
     });

@@ -3,11 +3,7 @@ import { db } from "../../../../../../lib/db";
 import { notFound } from "next/navigation";
 import { AddExpenseForm } from "@/components/add-expense-form";
 
-interface AddExpensePageProps {
-  params: {
-    groupId: string;
-  };
-}
+// ...existing code...
 
 async function getGroupWithMembers(groupId: string, userId: string) {
   const group = await db.group.findFirst({
@@ -35,7 +31,7 @@ async function getGroupWithMembers(groupId: string, userId: string) {
   return group;
 }
 
-export default async function AddExpensePage({ params }: AddExpensePageProps) {
+export default async function AddExpensePage({ params }: { params: { groupId: string } }) {
   const { groupId } = params;
   const user = await getCurrentUser();
   if (!user) {

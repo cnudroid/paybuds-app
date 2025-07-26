@@ -3,9 +3,91 @@ import { getCurrentUser } from '@/lib/session';
 import { db } from '@/lib/db';
 import { calculateGroupBalances } from '@/lib/balances';
 
+
+type FriendRouteContext = { params: { friendId: string } };
+
+
+interface Member {
+  id: string;
+  createdAt: Date;
+  groupId: string;
+  userId: string;
+  user: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  };
+}
+
+interface ExpenseSplit {
+  id: string;
+  amount: number;
+  userId: string;
+  expenseId: string;
+}
+
+interface Expense {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  amount: number;
+  groupId: string;
+  payerId: string;
+  description: string;
+  category: string;
+  date: Date;
+  payer: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  };
+  splits: ExpenseSplit[];
+}
+
+interface Settlement {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  amount: number;
+  groupId: string;
+  payerId: string;
+  receiverId: string;
+  payer: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  };
+  receiver: {
+    id: string;
+    name: string | null;
+    email: string | null;
+    emailVerified: Date | null;
+    image: string | null;
+  };
+}
+
+interface Balance {
+  userId: string;
+  balance: number;
+}
+
+interface Group {
+  id: string;
+  name: string;
+  members: Member[];
+  expenses: Expense[];
+  settlements: Settlement[];
+}
+
 export async function GET(
   req: Request,
-  { params }: { params: { friendId: string } }
+  context
 ) {
   try {
     const user = await getCurrentUser();
@@ -13,12 +95,12 @@ export async function GET(
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const friendId = params.friendId;
+    const friendId = context.params.friendId;
 
     // 1. Fetch friend details
     const friend = await db.user.findUnique({
       where: { id: friendId },
-    });
+    }) as { id: string; name: string } | null;
 
     if (!friend) {
       return new NextResponse('Friend not found', { status: 404 });
@@ -37,13 +119,13 @@ export async function GET(
         expenses: { include: { payer: true, splits: true } },
         settlements: { include: { payer: true, receiver: true } },
       },
-    });
+    }) as Group[];
 
     // 3. Calculate the balance for each shared group and the total balance
     let totalBalance = 0;
-    const groupBalances = sharedGroups.map(group => {
-      const balances = calculateGroupBalances(group.members, group.expenses, group.settlements);
-      const userBalanceInGroup = balances.find(b => b.userId === user.id)?.balance || 0;
+    const groupBalances = sharedGroups.map((group: Group) => {
+      const balances: Balance[] = calculateGroupBalances(group.members, group.expenses, group.settlements);
+      const userBalanceInGroup = balances.find((b: Balance) => b.userId === user.id)?.balance || 0;
       totalBalance += userBalanceInGroup;
       return {
         groupId: group.id,

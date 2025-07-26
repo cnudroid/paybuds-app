@@ -9,7 +9,7 @@ const updateGroupSchema = z.object({
 
 export async function GET(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -17,9 +17,10 @@ export async function GET(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -40,7 +41,7 @@ export async function GET(
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -48,9 +49,10 @@ export async function PATCH(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const isMember = await db.groupMember.findFirst({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: user.id,
       },
     });
@@ -64,7 +66,7 @@ export async function PATCH(
 
     await db.group.update({
       where: {
-        id: params.groupId,
+        id: groupId,
       },
       data: {
         name: body.name,
@@ -84,7 +86,7 @@ export async function PATCH(
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -92,9 +94,10 @@ export async function DELETE(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -117,7 +120,7 @@ export async function DELETE(
 
     await db.group.delete({
       where: {
-        id: params.groupId,
+        id: groupId,
       },
     });
 

@@ -25,7 +25,7 @@ function ActivityListItem({ item }: { item: ActivityItem }) {
         <p className="text-sm font-medium leading-none">
           {item.type === 'expense' ? (
             <span>
-              <strong>{item.payer.name}</strong> added an expense <strong>\"{item.description}\"</strong> in <strong>{item.group.name}</strong>
+              <strong>{item.payer.name}</strong> added an expense <strong>&quot;{item.description}&quot;</strong> in <strong>{item.group.name}</strong>
             </span>
           ) : (
             <span>

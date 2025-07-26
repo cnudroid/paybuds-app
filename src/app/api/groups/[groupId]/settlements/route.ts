@@ -10,7 +10,7 @@ const settlementSchema = z.object({
 
 export async function POST(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context
 ) {
   try {
     const user = await getCurrentUser();
@@ -18,7 +18,7 @@ export async function POST(
       return NextResponse.json({ error: 'Not authorized' }, { status: 401 });
     }
 
-    const { groupId } = params;
+    const { groupId } = context.params;
     const body = await req.json();
     const { receiverId, amount } = settlementSchema.parse(body);
 

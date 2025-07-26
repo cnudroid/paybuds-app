@@ -5,11 +5,7 @@ import { EditGroupNameForm } from "../../../../../components/edit-group-name-for
 import { calculateGroupBalances } from "../../../../../lib/balances";
 import { DeleteGroupButton } from "../../../../../components/delete-group-button";
 
-interface GroupSettingsPageProps {
-  params: {
-    groupId: string;
-  };
-}
+// ...existing code...
 
 async function getGroup(groupId: string, userId: string) {
   const group = await db.group.findFirst({
@@ -35,7 +31,7 @@ async function getGroup(groupId: string, userId: string) {
   return group;
 }
 
-export default async function GroupSettingsPage({ params }: GroupSettingsPageProps) {
+export default async function GroupSettingsPage({ params }: { params: { groupId: string } }) {
   const user = await getCurrentUser();
   if (!user) {
     return new Response("Unauthorized", { status: 401 });

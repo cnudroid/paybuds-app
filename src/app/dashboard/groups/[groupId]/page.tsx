@@ -13,11 +13,7 @@ import { SettlementsList } from "../../../../components/settlements-list";
 import { ExpensesList } from '../../../../components/expenses-list';
 import { Prisma } from '@prisma/client';
 
-interface GroupPageProps {
-  params: {
-    groupId: string;
-  };
-}
+// ...existing code...
 
 const groupWithDetails = Prisma.validator<Prisma.GroupDefaultArgs>()({
   include: {
@@ -65,7 +61,7 @@ async function getGroup(groupId: string, userId: string): Promise<GroupWithDetai
   return group;
 }
 
-export default async function GroupPage({ params }: GroupPageProps) {
+export default async function GroupPage({ params }: { params: { groupId: string } }) {
   const { groupId } = params;
   const user = await getCurrentUser();
 

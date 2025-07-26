@@ -27,7 +27,7 @@ const expenseCreateSchema = z.object({
 
 export async function POST(
   req: Request,
-  context: { params: { groupId: string } }
+  context
 ) {
   const { params } = context;
   try {

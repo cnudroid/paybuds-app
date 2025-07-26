@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Icons } from "./icons"
 
-interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
+type UserAuthFormProps = React.HTMLAttributes<HTMLDivElement>;
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isGoogleLoading, setIsGoogleLoading] = React.useState<boolean>(false)
@@ -18,31 +18,31 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsGoogleLoading(true)
 
     try {
-      await signIn("google", {
-        callbackUrl: searchParams?.get("from") || "/dashboard",
+      await signIn('google', {
+        callbackUrl: searchParams?.get('from') || '/dashboard',
       })
     } catch (error) {
-      // Handle error: maybe show a toast notification
-      console.error(error)
+      // Handle error
     } finally {
       setIsGoogleLoading(false)
     }
   }
 
   return (
-    <div className={cn("grid gap-6", className)} {...props}>
+    <div className={cn("flex flex-col space-y-4", className)} {...props}>
       <Button
         variant="outline"
         type="button"
-        onClick={loginWithGoogle}
         disabled={isGoogleLoading}
+        onClick={loginWithGoogle}
+        className="w-full"
       >
         {isGoogleLoading ? (
           <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
         ) : (
           <Icons.google className="mr-2 h-4 w-4" />
         )}
-        Google
+        Continue with Google
       </Button>
     </div>
   )

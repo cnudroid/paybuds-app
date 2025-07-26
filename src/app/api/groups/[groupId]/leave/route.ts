@@ -4,7 +4,7 @@ import { calculateGroupBalances } from "../../../../../lib/balances";
 
 export async function DELETE(
   req: Request,
-  { params }: { params: { groupId: string } }
+  context: unknown
 ) {
   try {
     const user = await getCurrentUser();
@@ -12,9 +12,10 @@ export async function DELETE(
       return new Response("Unauthorized", { status: 401 });
     }
 
+    const { groupId } = (context as { params: { groupId: string } }).params;
     const group = await db.group.findFirst({
       where: {
-        id: params.groupId,
+        id: groupId,
         members: { some: { userId: user.id } },
       },
       include: {
@@ -27,7 +28,7 @@ export async function DELETE(
       return new Response("Group not found or you are not a member.", { status: 404 });
     }
 
-    const balances = calculateGroupBalances(group.members, group.expenses);
+    const balances = calculateGroupBalances(group.members, group.expenses, group.settlements ?? []);
     const userBalance = balances.find((b) => b.userId === user.id);
 
     if (userBalance && userBalance.balance !== 0) {
@@ -36,7 +37,7 @@ export async function DELETE(
 
     await db.groupMember.deleteMany({
       where: {
-        groupId: params.groupId,
+        groupId: groupId,
         userId: user.id,
       },
     });

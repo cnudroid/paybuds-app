@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client/edge';
-import { withAccelerate } from '@prisma/extension-accelerate';
 
 declare global {
   // allow global `var` declarations
@@ -7,10 +6,14 @@ declare global {
   var prisma: PrismaClient | undefined;
 }
 
-export const db =
-  global.prisma ||
-  new PrismaClient({
-    log: ['query'],
-  }).$extends(withAccelerate());
+let db: PrismaClient;
 
-if (process.env.NODE_ENV !== 'production') global.prisma = db;
+if (!global.prisma) {
+  db = new PrismaClient({ log: ['query'] });
+  if (process.env.NODE_ENV !== 'production') global.prisma = db;
+} else {
+  db = global.prisma;
+}
+
+export { db };
+
