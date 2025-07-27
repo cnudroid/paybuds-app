@@ -47,6 +47,7 @@ export async function POST(
       create: {
         email: body.email,
         name: body.email.split('@')[0], // Use email prefix as a default name
+        isPlaceholder: true, // Mark as placeholder until they sign up with OAuth
       },
     });
 

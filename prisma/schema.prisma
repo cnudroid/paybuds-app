@@ -44,6 +44,7 @@ model User {
   email               String?        @unique
   emailVerified       DateTime?
   image               String?
+  isPlaceholder       Boolean        @default(false)
   accounts            Account[]
   sessions            Session[]
   groupMemberships    GroupMember[]
@@ -52,6 +53,8 @@ model User {
   paidSettlements     Settlement[]   @relation("PayerSettlements")
   receivedSettlements Settlement[]   @relation("ReceiverSettlements")
   createdGroups       Group[]        @relation("CreatedGroups")
+  sentInvitations     GroupInvitation[] @relation("SentInvitations")
+  acceptedInvitations GroupInvitation[] @relation("AcceptedInvitations")
 }
 
 model VerificationToken {
@@ -70,6 +73,7 @@ model Group {
   members     GroupMember[]
   expenses    Expense[]
   settlements Settlement[]
+  invitations GroupInvitation[]
   createdById String
   createdBy   User   @relation("CreatedGroups", fields: [createdById], references: [id])
 }
@@ -130,4 +134,32 @@ model Settlement {
 
   receiver   User   @relation("ReceiverSettlements", fields: [receiverId], references: [id], onDelete: Cascade)
   receiverId String
+}
+
+model GroupInvitation {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  email     String
+  status    InvitationStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+  acceptedAt DateTime?
+  
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  groupId   String
+  
+  invitedBy User     @relation("SentInvitations", fields: [invitedById], references: [id], onDelete: Cascade)
+  invitedById String
+  
+  acceptedBy User?   @relation("AcceptedInvitations", fields: [acceptedById], references: [id], onDelete: SetNull)
+  acceptedById String?
+  
+  @@unique([groupId, email])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
 }
