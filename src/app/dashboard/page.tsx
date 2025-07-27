@@ -9,9 +9,13 @@ import { DashboardSummary } from '@/components/dashboard-summary';
 import { Suspense } from 'react';
 
 export default async function DashboardPage() {
+  console.log('Dashboard: NODE_ENV =', process.env.NODE_ENV);
+  
   const user = await getCurrentUser();
+  console.log('Dashboard: user =', user ? 'found' : 'not found');
 
   if (!user) {
+    console.log('Dashboard: No user found, redirecting to signin');
     // In production, this will redirect. In development, this check ensures the component
     // doesn't proceed to render with an undefined user, although `getCurrentUser` should prevent this.
     if (process.env.NODE_ENV === "production") {

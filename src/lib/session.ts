@@ -9,6 +9,8 @@ export async function getSession() {
 
 export async function getCurrentUser(): Promise<PrismaUser | undefined> {
   const session = await getSession();
+  console.log('getCurrentUser: NODE_ENV =', process.env.NODE_ENV);
+  console.log('getCurrentUser: session =', session ? 'found' : 'not found');
 
   if (process.env.NODE_ENV === "development") {
     // In development, if a real session exists, use it. Otherwise, use/create the mock user.
@@ -35,8 +37,10 @@ export async function getCurrentUser(): Promise<PrismaUser | undefined> {
   }
 
   if (!session?.user) {
+    console.log('getCurrentUser: No session user in production');
     return undefined;
   }
 
+  console.log('getCurrentUser: Found session user in production');
   return session.user as PrismaUser;
 }
