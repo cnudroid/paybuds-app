@@ -12,6 +12,10 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    signIn: async ({ user, account, profile, email, credentials }) => {
+      // Allow sign in for OAuth providers
+      return true
+    },
     session: async ({ session, token }) => {
       if (session?.user && token?.sub) {
         session.user.id = token.sub
