@@ -19,7 +19,9 @@ export async function GET(request: NextRequest) {
       },
       envVars: {
         hasDatabaseUrl: !!process.env.DATABASE_URL,
-        databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...'
+        hasPrismaDatabaseUrl: !!process.env.PRISMA_DATABASE_URL,
+        databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...',
+        prismaDatabaseUrlPrefix: process.env.PRISMA_DATABASE_URL?.substring(0, 20) + '...'
       }
     });
   } catch (error) {
@@ -30,7 +32,9 @@ export async function GET(request: NextRequest) {
       error: error instanceof Error ? error.message : 'Unknown database error',
       envVars: {
         hasDatabaseUrl: !!process.env.DATABASE_URL,
-        databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...'
+        hasPrismaDatabaseUrl: !!process.env.PRISMA_DATABASE_URL,
+        databaseUrlPrefix: process.env.DATABASE_URL?.substring(0, 20) + '...',
+        prismaDatabaseUrlPrefix: process.env.PRISMA_DATABASE_URL?.substring(0, 20) + '...'
       }
     }, { status: 500 });
   }
